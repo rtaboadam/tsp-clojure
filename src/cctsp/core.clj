@@ -1,7 +1,14 @@
-(ns cctsp.core
-  (:gen-class))
+; (ns cctsp.core
+;   (:gen-class))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+; (defn -main
+;   "I don't do a whole lot ... yet."
+;   [& args]
+;   (println "Hello, World!"))
+
+(ns cctsp.core 
+	(:gen-class)
+	(:use cctsp.cities))
+
+(defn -main [& args]
+  (foo 1))
