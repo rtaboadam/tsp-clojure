@@ -1,4 +1,6 @@
 (ns cctsp.core
+  (:require [cctsp.database :refer :all]
+            [clojure.java.jdbc :as sql])
   (:gen-class))
 
 (defn -main
