@@ -22,3 +22,18 @@
 (deftest d-test
   (testing "It should be return 121"
     (is (= (count (get_neighbors 1 db)) 121))))
+
+(deftest e-test
+  (testing "It should be true"
+    (let [connection (-> (sql/query db "SELECT * FROM connections WHERE id_city_1 = 619 AND id_city_2 = 847") first)]
+      (is (= (connection :distance) (distance 619 847))))))
+
+(deftest e1-test
+  (testing "It should be true"
+    (let [connection (-> (sql/query db "SELECT * FROM connections WHERE id_city_1 = 622 AND id_city_2 = 733") first)]
+      (is (= (connection :distance) (distance 622 733))))))
+
+(deftest e2-test
+  (testing "It should be true"
+    (let [connection (-> (sql/query db "SELECT * FROM connections WHERE id_city_1 = 851 AND id_city_2 = 993") first)]
+      (is (= (connection :distance) (distance 851 993))))))
