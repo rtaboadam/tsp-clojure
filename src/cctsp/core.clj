@@ -1,6 +1,7 @@
 (ns cctsp.core
-  (:require [cctsp.database :refer :all]
-            [clojure.java.jdbc :as sql])
+  (:require [clojure.java.jdbc :as sql]
+            [random-seed.core :refer :all])
+  (:refer-clojure :exclude [rand rand-int rand-nth])
   (:gen-class))
 
 (defn -main
