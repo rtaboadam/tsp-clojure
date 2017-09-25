@@ -4,16 +4,17 @@
   (:refer-clojure :exclude [rand rand-int rand-nth])
   (:gen-class))
 
-
 (declare cost-function)
 (declare gen-city)
 (declare distance-memo)
 (declare distance)
+(declare swap)
 
 (def db 
 	{ :classname "org.sqlite.JDBC" 
 	  :subprotocol "sqlite"
 	  :subname "resources/world.db"})
+
 
 (def cities_length (count (sql/query db "SELECT * FROM cities")))
 
@@ -37,12 +38,13 @@
 	(to-string [this]))
 
 (defprotocol PointCollection
-	(total-distance [this]))
+	(total-distance [this])
+	(neighbour [this]))
 
-(defrecord City [name latitude longitude]
+(defrecord City [id name latitude longitude]
 	Point
-	(distance-to [this city] (distance-memo this city))
-	(to-string [this] (str (:name this) ":(" (:latitude this) "," (:longitude this))))
+	(distance-to [this city] (distance-memo (:id this) (:id city)))
+	(to-string [this] (str (:name this) ":(" (:latitude this) "," (:longitude this) ")")))
 
 (defrecord Tour [cities]
   PointCollection
@@ -52,7 +54,9 @@
   			(if (empty? (rest curr))
   				(reduce + distances)
   				(recur (rest curr) (conj distances (distance-to (first curr) (second curr))))
-  				)))))
+  				))))
+  (neighbour [this]
+  	(swap this)))
 
 (defn distance [c1 c2]
 	((cities_matrix c1) c2))
@@ -63,6 +67,25 @@
 	(let [item1 (nth coll pos1)
 		  item2 (nth coll pos2)]
 		  (assoc (assoc coll pos1 item2) pos2 item1)))
+
+(defn gen-city [city-id]
+	(let [city (-> (sql/query db ["SELECT * FROM cities WHERE id=?" city-id]) first)] 
+		(City. (city :id) (city :name) (city :latitude) (city :longitude))))
+
+(defn random-tour [number-of-cities]
+	(Tour. (vec (map 
+		gen-city 
+		(take number-of-cities (repeatedly #(rand-int cities_length))))
+	)))
+
+
+
+; (defn calculate-lot [temp solution limit]
+; 	(loop [c 0 r 0. s solution]
+; 		(let [s' (neighbour s)
+; 			  f_s (total-distance s)
+; 			  f_s' (total-distance s')]
+; 			  (if (>= (+ f_s temp) f_s'))))
 
 (defn -main
   "I don't do a whole lot ... yet."
